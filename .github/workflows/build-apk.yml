@@ -44,7 +44,7 @@ jobs:
           pip install buildozer "cython==0.29.34"
 
       - name: Prepare Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Accept Android licenses
         run: yes | sdkmanager --licenses || true
