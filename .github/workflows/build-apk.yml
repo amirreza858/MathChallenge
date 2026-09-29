@@ -49,23 +49,20 @@ jobs:
           pip install "cython==0.29.34"
 
 
-      - name: Prepare Android SDK
-        uses: android-actions/setup-android@v4
-
-
-      - name: Accept Android licenses
+      - name: Configure Android SDK
         run: |
+          mkdir -p "$HOME/.buildozer/android/platform"
+
           yes | sdkmanager --licenses || true
 
 
       - name: Build APK
-        env:
-          ACCEPT_ANDROID_SDK_LICENSE: "1"
         run: |
-          buildozer -v android debug
+          yes | buildozer android debug
 
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Math-Challenge-APK
