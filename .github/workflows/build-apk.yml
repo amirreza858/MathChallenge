@@ -12,29 +12,19 @@ jobs:
 
     steps:
 
-      # -------------------------
-      # 1. Get project files
-      # -------------------------
       - name: Checkout project
         uses: actions/checkout@v4
 
 
-      # -------------------------
-      # 2. Python 3.12
-      # -------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
 
-      # -------------------------
-      # 3. Linux dependencies
-      # -------------------------
       - name: Install system dependencies
         run: |
           sudo apt-get update
-
           sudo apt-get install -y \
             git \
             zip \
@@ -52,9 +42,6 @@ jobs:
             libssl-dev
 
 
-      # -------------------------
-      # 4. Python packages
-      # -------------------------
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
@@ -62,64 +49,22 @@ jobs:
           pip install "cython==0.29.34"
 
 
-      # -------------------------
-      # 5. Android SDK
-      # -------------------------
       - name: Prepare Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: >
-            platform-tools
-            platforms;android-35
-            build-tools;37.0.0
 
 
-      # -------------------------
-      # 6. Accept all Android licenses
-      # -------------------------
       - name: Accept Android licenses
         run: |
           yes | sdkmanager --licenses || true
 
 
-      # -------------------------
-      # 7. Explicitly install Build Tools
-      # -------------------------
-      - name: Install Android Build Tools
-        run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-35"
-          sdkmanager "build-tools;37.0.0"
-
-
-      # -------------------------
-      # 8. Check AIDL
-      # -------------------------
-      - name: Check Android AIDL
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-
-          ls -la "$ANDROID_HOME/build-tools"
-
-          test -f "$ANDROID_HOME/build-tools/37.0.0/aidl"
-
-          "$ANDROID_HOME/build-tools/37.0.0/aidl" --help > /dev/null
-
-          echo "AIDL is installed and executable."
-
-
-      # -------------------------
-      # 9. Build APK
-      # -------------------------
       - name: Build APK
+        env:
+          ACCEPT_ANDROID_SDK_LICENSE: "1"
         run: |
           buildozer -v android debug
 
 
-      # -------------------------
-      # 10. Upload APK
-      # -------------------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
