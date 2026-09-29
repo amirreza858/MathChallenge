@@ -45,17 +45,8 @@ jobs:
 
       - name: Prepare Android SDK
         uses: android-actions/setup-android@v4
-
-      - name: Accept Android licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Install Android SDK tools
-        run: |
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-35"
-          sdkmanager "build-tools;35.0.0"
-          sdkmanager "cmdline-tools;latest"
-
+        with:
+         packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
       - name: Build APK
         run: |
           buildozer -v android debug
